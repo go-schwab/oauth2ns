@@ -1,4 +1,4 @@
-module github.com/go-schwab/trader
+module github.com/go-schwab/oauth2ns
 
 go 1.23.2
 
