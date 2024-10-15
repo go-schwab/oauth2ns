@@ -1,6 +1,6 @@
 # go-schwab/oauth2ns
 
-this is for internal use at [go-schwab](github.com/go-schwab).
+this is for internal use at [go-schwab](https://github.com/go-schwab).
 it is a **schwab-only** oauth2ns implementation, meaning you cannot customize the configuration.
 
 ---
