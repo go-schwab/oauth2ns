@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"time"
 
@@ -32,22 +31,12 @@ const (
 	oauthStateStringContextKey = 987
 )
 
-var (
-	APPKEY = os.Getenv("APPKEY")
-	SECRET = os.Getenv("SECRET")
-	CBURL  = os.Getenv("CBURL")
-	// IP is the ip of this machine that will be called back in the browser. It may not be a hostname.
-	// If IP is not 127.0.0.1 DEVICE_NAME must be set. It can be any short string.
-	IP = CBURL
-)
-
 // use returned AuthorizedClient.Get, .Post, etc. with ("/path")
-func Run() (*AuthorizedClient, error) {
-	return AuthenticateUser(&oauth2.Config{
+func Initiate(APPKEY, SECRET, CBURL string) (*AuthorizedClient, error) {
+	return AuthenticateUser(CBURL, &oauth2.Config{
 		ClientID:     APPKEY,
 		ClientSecret: SECRET,
 		Endpoint: oauth2.Endpoint{
-			//TODO: is this enough, or do i have to include in url like fmt.Sprintf("https://api.schwabapi.com/v1/oauth/authorize?client_id=%s&redirect_uri=%s", os.Getenv("APPKEY"), os.Getenv("CBURL"))
 			AuthURL:  "https://api.schwabapi.com/v1/oauth/authorize",
 			TokenURL: "https://api.schwabapi.com/v1/oauth/token",
 		},
@@ -67,7 +56,7 @@ func WithAuthCallHTTPParams(values url.Values) AuthenticateUserOption {
 }
 
 // AuthenticateUser starts the login process
-func AuthenticateUser(oauthConfig *oauth2.Config, options ...AuthenticateUserOption) (*AuthorizedClient, error) {
+func AuthenticateUser(IP string, oauthConfig *oauth2.Config, options ...AuthenticateUserOption) (*AuthorizedClient, error) {
 	// validate params
 	if oauthConfig == nil {
 		return nil, stacktrace.NewError("oauthConfig can't be nil")
@@ -136,7 +125,7 @@ func AuthenticateUser(oauthConfig *oauth2.Config, options ...AuthenticateUserOpt
 		stopHTTPServerChan <- struct{}{}
 		return client, nil
 
-		// if authentication process is cancelled first return an error
+	// if authentication process is cancelled first return an error
 	case <-cancelAuthentication:
 		return nil, fmt.Errorf("authentication timed out and was cancelled")
 	}
