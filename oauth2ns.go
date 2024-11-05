@@ -1,4 +1,4 @@
-package oauth
+package oauth2ns
 
 import (
 	"context"
