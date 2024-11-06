@@ -192,7 +192,7 @@ func startHTTPServer(ctx context.Context, conf *oauth2.Config) (clientChan chan 
 
 	http.HandleFunc("/", callbackHandler(ctx, conf, clientChan))
 
-	srv := &http.Server{Addr: fmt.Sprintf("https://%s:%s", IP, PORT)}
+	srv := &http.Server{Addr: fmt.Sprintf("https://%s:%d", IP, PORT)}
 
 	// handle server shutdown signal
 	go func() {
